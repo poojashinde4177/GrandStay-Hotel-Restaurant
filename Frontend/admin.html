@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GrandStay Admin Panel</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>GrandStay Admin Dashboard</h1>
+
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="booking.html">Booking</a>
+            <a href="restaurant.html">Restaurant</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="admin.html" class="active">Admin</a>
+            <a href="#" onclick="logoutAdmin()">Logout</a>
+        </nav>
+    </header>
+
+    <!-- Admin Welcome -->
+    <section class="booking-form">
+        <h2 id="adminWelcome">Welcome Admin</h2>
+
+        <p><strong>Name:</strong> <span id="adminName"></span></p>
+        <p><strong>Email:</strong> <span id="adminEmail"></span></p>
+        <p><strong>Role:</strong> <span id="adminRole"></span></p>
+        <p><strong>System Status:</strong> Full Access Granted ✅</p>
+    </section>
+
+    <!-- Room Bookings Section -->
+    <section>
+        <h2>Room Bookings Management</h2>
+
+        <table border="1" width="100%" cellpadding="10"
+            style="background:white; border-collapse: collapse; text-align:center;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Check-In</th>
+                    <th>Check-Out</th>
+                    <th>Room</th>
+                    <th>Guests</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody id="bookingTable">
+                <tr>
+                    <td colspan="8">Loading bookings...</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Food Orders Section -->
+    <section>
+        <h2>Food Orders Management</h2>
+
+        <table border="1" width="100%" cellpadding="10"
+            style="background:white; border-collapse: collapse; text-align:center;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Food Item</th>
+                    <th>Quantity</th>
+                    <th>Special Request</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody id="foodOrderTable">
+                <tr>
+                    <td colspan="10">Loading food orders...</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Script -->
+    <script>
+
+        // ===============================
+        // ADMIN SECURITY CHECK
+        // ===============================
+        const loggedInUser = JSON.parse(localStorage.getItem("grandstayUser"));
+
+        if (!loggedInUser) {
+            alert("Please login first!");
+            window.location.href = "login.html";
+        }
+
+        if (loggedInUser.role !== "admin") {
+            alert("Access Denied! Admins only.");
+            window.location.href = "dashboard.html";
+        }
+
+        // DISPLAY ADMIN INFO
+        document.getElementById("adminWelcome").innerText =
+            "Welcome, " + loggedInUser.name + " 👑";
+
+        document.getElementById("adminName").innerText = loggedInUser.name;
+        document.getElementById("adminEmail").innerText = loggedInUser.email;
+        document.getElementById("adminRole").innerText = loggedInUser.role;
+
+
+        // ===============================
+        // LOAD ROOM BOOKINGS
+        // ===============================
+        fetch("http://localhost:8080/bookings")
+            .then(response => response.json())
+            .then(data => {
+
+                let table = document.getElementById("bookingTable");
+                table.innerHTML = "";
+
+                if (data.length === 0) {
+                    table.innerHTML = `
+                        <tr>
+                            <td colspan="8">No bookings found.</td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                data.forEach(booking => {
+
+                    table.innerHTML += `
+                        <tr>
+                            <td>${booking.id}</td>
+                            <td>${booking.customerName}</td>
+                            <td>${booking.customerEmail}</td>
+                            <td>${booking.checkInDate} ${booking.checkInTime || ""}</td>
+                            <td>${booking.checkOutDate} ${booking.checkOutTime || ""}</td>
+                            <td>${booking.roomType}</td>
+                            <td>${booking.guests}</td>
+                            <td>
+                                <button onclick="deleteBooking(${booking.id})">
+                                    Cancel
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+            })
+            .catch(error => {
+                console.error("Error loading bookings:", error);
+            });
+
+
+        // ===============================
+        // DELETE BOOKING
+        // ===============================
+        function deleteBooking(id) {
+
+            if (!confirm("Cancel this booking?")) {
+                return;
+            }
+
+            fetch(`http://localhost:8080/bookings/${id}`, {
+                method: "DELETE"
+            })
+                .then(() => {
+                    alert("Booking Cancelled Successfully!");
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error("Booking delete error:", error);
+                });
+        }
+
+
+        // ===============================
+        // LOAD FOOD ORDERS
+        // ===============================
+        fetch("http://localhost:8080/food-orders")
+            .then(response => response.json())
+            .then(data => {
+
+                let table = document.getElementById("foodOrderTable");
+                table.innerHTML = "";
+
+                if (data.length === 0) {
+                    table.innerHTML = `
+                        <tr>
+                            <td colspan="10">No food orders found.</td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                data.forEach(order => {
+
+                    table.innerHTML += `
+                        <tr>
+                            <td>${order.id}</td>
+                            <td>${order.customerName}</td>
+                            <td>${order.customerEmail}</td>
+                            <td>${order.foodItem}</td>
+                            <td>${order.quantity}</td>
+                            <td>${order.specialRequest || "None"}</td>
+                            <td>${order.orderDate}</td>
+                            <td>${order.orderTime}</td>
+
+                            <td>
+                                <select onchange="updateFoodStatus(${order.id}, this.value)">
+                                    <option value="Pending" ${order.orderStatus === 'Pending' ? 'selected' : ''}>
+                                        Pending
+                                    </option>
+
+                                    <option value="Preparing" ${order.orderStatus === 'Preparing' ? 'selected' : ''}>
+                                        Preparing
+                                    </option>
+
+                                    <option value="Delivered" ${order.orderStatus === 'Delivered' ? 'selected' : ''}>
+                                        Delivered
+                                    </option>
+                                </select>
+                            </td>
+
+                            <td>
+                                <button onclick="deleteFoodOrder(${order.id})">
+                                    Cancel
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+            })
+            .catch(error => {
+                console.error("Error loading food orders:", error);
+            });
+
+
+        // ===============================
+        // DELETE FOOD ORDER
+        // ===============================
+        function deleteFoodOrder(id) {
+
+            if (!confirm("Cancel this food order?")) {
+                return;
+            }
+
+            fetch(`http://localhost:8080/food-orders/${id}`, {
+                method: "DELETE"
+            })
+                .then(response => response.text())
+                .then(message => {
+                    alert(message);
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error("Food delete error:", error);
+                });
+        }
+
+
+        // ===============================
+        // UPDATE FOOD STATUS
+        // ===============================
+        function updateFoodStatus(id, status) {
+
+            fetch(`http://localhost:8080/food-orders/${id}/status?status=${status}`, {
+                method: "PUT"
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert("Food Order Status Updated to " + status);
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error("Status update error:", error);
+                    alert("Status update failed!");
+                });
+        }
+
+
+        // ===============================
+        // LOGOUT ADMIN
+        // ===============================
+        function logoutAdmin() {
+            localStorage.removeItem("grandstayUser");
+            alert("Admin logged out successfully!");
+            window.location.href = "login.html";
+        }
+
+    </script>
+
+</body>
+
+</html>

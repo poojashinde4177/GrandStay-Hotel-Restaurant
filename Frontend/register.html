@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GrandStay Premium Register</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>GrandStay Hotel & Restaurant</h1>
+
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="rooms.html">Rooms</a>
+            <a href="restaurant.html">Restaurant</a>
+            <a href="booking.html">Booking</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="admin.html">Admin</a>
+            <a href="login.html">Login</a>
+            <a href="register.html" class="active">Register</a>
+        </nav>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2>Create Your GrandStay Account</h2>
+            <p>Join premium hospitality, luxury dining, bookings, and exclusive guest experiences.</p>
+        </div>
+    </section>
+
+    <!-- Register Form -->
+    <section>
+        <div class="booking-form">
+
+            <h2>Register Now</h2>
+
+            <input type="text" id="name" placeholder="Enter Full Name" required>
+
+            <input type="email" id="email" placeholder="Enter Email Address" required>
+
+            <input type="password" id="password" placeholder="Create Password" required>
+
+            <select id="role">
+                <option value="customer">Customer Account</option>
+                <option value="admin">Admin Account</option>
+            </select>
+
+            <button onclick="registerUser()">Create Account</button>
+
+            <br><br>
+
+            <p>Already have an account?</p>
+
+            <a href="login.html">
+                <button type="button">Login Here</button>
+            </a>
+
+        </div>
+    </section>
+
+    <!-- Benefits -->
+    <section>
+        <h2>Why Register with GrandStay?</h2>
+
+        <div class="rooms-container">
+
+            <div class="room-card">
+                <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85" alt="Luxury Stay">
+                <h3>Luxury Bookings</h3>
+                <p>Book elegant rooms and premium suites instantly.</p>
+            </div>
+
+            <div class="room-card">
+                <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0" alt="Dining">
+                <h3>Dining Access</h3>
+                <p>Enjoy world-class cuisine and food order tracking.</p>
+            </div>
+
+            <div class="room-card">
+                <img src="https://images.unsplash.com/photo-1556740749-887f6717d7e4" alt="Dashboard">
+                <h3>Smart Dashboard</h3>
+                <p>Manage bookings, food, payments, and status updates.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 GrandStay Hotel & Restaurant | Premium Membership</p>
+    </footer>
+
+    <!-- REGISTER SCRIPT -->
+    <script>
+        function registerUser() {
+
+            const name = document.getElementById("name").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const role = document.getElementById("role").value;
+
+            if (!name || !email || !password) {
+                alert("Please fill all registration details!");
+                return;
+            }
+
+            fetch("http://localhost:8080/users/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name: name,
+                    email: email,
+                    password: password,
+                    role: role
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Registration failed");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert("Registration Successful! Please Login.");
+                    window.location.href = "login.html";
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("Registration failed! Email may already exist.");
+                });
+
+        }
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GrandStay Login Portal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>GrandStay Hotel & Restaurant</h1>
+
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="rooms.html">Rooms</a>
+            <a href="restaurant.html">Restaurant</a>
+            <a href="booking.html">Booking</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="admin.html">Admin</a>
+            <a href="login.html" class="active">Login</a>
+        </nav>
+    </header>
+
+    <!-- Hero Login Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2>Welcome Back to GrandStay</h2>
+            <p>Access your luxury bookings, food orders, guest dashboard, and premium experiences.</p>
+        </div>
+    </section>
+
+    <!-- Login Section -->
+    <section>
+        <div class="booking-form">
+
+            <h2>Login to Your Account</h2>
+
+            <input type="email" id="email" placeholder="Enter Your Email" required>
+
+            <input type="password" id="password" placeholder="Enter Your Password" required>
+
+            <select id="role">
+                <option value="customer">Customer Login</option>
+                <option value="admin">Admin Login</option>
+            </select>
+
+            <button onclick="loginUser()">Login Now</button>
+
+            <br><br>
+
+            <p>New to GrandStay?</p>
+
+            <a href="register.html">
+                <button type="button">Create Premium Account</button>
+            </a>
+
+        </div>
+    </section>
+
+    <!-- Guest Benefits -->
+    <section>
+        <h2>Why Join GrandStay?</h2>
+
+        <div class="rooms-container">
+
+            <div class="room-card">
+                <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85" alt="Luxury Room">
+                <h3>Luxury Bookings</h3>
+                <p>Manage premium room reservations with ease.</p>
+            </div>
+
+            <div class="room-card">
+                <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0" alt="Dining">
+                <h3>Fine Dining Access</h3>
+                <p>Track restaurant orders and exclusive dining experiences.</p>
+            </div>
+
+            <div class="room-card">
+                <img src="https://images.unsplash.com/photo-1556740749-887f6717d7e4" alt="Rewards">
+                <h3>Elite Dashboard</h3>
+                <p>Unlock personalized services and real-time updates.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 GrandStay Hotel & Restaurant | Secure Luxury Access</p>
+    </footer>
+
+    <script>
+        function loginUser() {
+
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const selectedRole = document.getElementById("role").value;
+
+            if (!email || !password) {
+                alert("Please enter email and password!");
+                return;
+            }
+
+            fetch("http://localhost:8080/users/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Invalid email or password");
+                    }
+                    return response.json();
+                })
+                .then(user => {
+
+                    // ROLE CHECK
+                    if (selectedRole === "admin" && user.role !== "admin") {
+                        alert("Access Denied! You are not registered as Admin.");
+                        return;
+                    }
+
+                    if (selectedRole === "customer" && user.role !== "customer") {
+                        alert("Please select correct login role!");
+                        return;
+                    }
+
+                    alert("Login Successful!");
+                    localStorage.setItem("grandstayUser", JSON.stringify(user));
+
+                    // REDIRECT
+                    if (user.role === "admin") {
+                        window.location.href = "admin.html";
+                    } else {
+                        window.location.href = "dashboard.html";
+                    }
+
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert(error.message);
+                });
+        }
+    </script>
+
+</body>
+
+</html>

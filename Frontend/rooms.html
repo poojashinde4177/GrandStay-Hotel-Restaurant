@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GrandStay Rooms</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>GrandStay Hotel Rooms</h1>
+
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="rooms.html">Rooms</a>
+            <a href="restaurant.html">Restaurant</a>
+            <a href="booking.html">Booking</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="admin.html">Admin</a>
+            <a href="login.html">Login</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section>
+        <h2>Choose Your Luxury Experience</h2>
+        <p>From cozy elegance to royal indulgence, discover rooms crafted for every traveler.</p>
+    </section>
+
+    <!-- Dynamic Rooms Section -->
+    <section>
+        <div class="rooms-container" id="rooms-list">
+
+            <!-- Default Room 1 -->
+            <div class="room-card">
+                <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85" alt="Standard Room">
+                <h3>Standard Room</h3>
+                <p>Affordable comfort with stylish interiors.</p>
+                <p>Price: ₹2500</p>
+                <p>Available</p>
+                <a href="booking.html"><button>Book Now</button></a>
+            </div>
+
+            <!-- Default Room 2 -->
+            <div class="room-card">
+                <img src="https://images.unsplash.com/photo-1505692952047-1a78307da8f2" alt="Deluxe Room">
+                <h3>Deluxe Room</h3>
+                <p>Premium comfort with luxury details.</p>
+                <p>Price: ₹4500</p>
+                <p>Available</p>
+                <a href="booking.html"><button>Book Now</button></a>
+            </div>
+
+            <!-- Default Room 3 -->
+            <div class="room-card">
+                <img src="https://images.unsplash.com/photo-1496417263034-38ec4f0b665a" alt="Luxury Suite">
+                <h3>Luxury Suite</h3>
+                <p>Elite hospitality with grand interiors.</p>
+                <p>Price: ₹8500</p>
+                <p>Available</p>
+                <a href="booking.html"><button>Book Now</button></a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Why Stay With Us -->
+    <section>
+        <h2>Why Our Rooms Stand Out</h2>
+
+        <div class="rooms-container">
+
+            <div class="room-card">
+                <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267" alt="Modern Comfort">
+                <h3>Modern Comfort</h3>
+                <p>Thoughtfully designed spaces for maximum relaxation.</p>
+            </div>
+
+            <div class="room-card">
+                <img src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa" alt="Elegant Design">
+                <h3>Elegant Design</h3>
+                <p>Luxury aesthetics blended with practical comfort.</p>
+            </div>
+
+            <div class="room-card">
+                <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85" alt="Premium Amenities">
+                <h3>Premium Amenities</h3>
+                <p>WiFi, dining, concierge, and unforgettable hospitality.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 GrandStay Hotel & Restaurant | Luxury Rooms Collection</p>
+    </footer>
+
+    <!-- Backend Room Fetch Script -->
+    <script>
+        fetch("http://localhost:8080/rooms")
+            .then(response => response.json())
+            .then(data => {
+                const roomsList = document.getElementById("rooms-list");
+
+                data.forEach(room => {
+
+                    let imageUrl = "";
+
+                    if (room.roomType.toLowerCase().includes("standard")) {
+                        imageUrl = "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85";
+                    } else if (room.roomType.toLowerCase().includes("deluxe")) {
+                        imageUrl = "https://images.unsplash.com/photo-1505692952047-1a78307da8f2";
+                    } else if (room.roomType.toLowerCase().includes("luxury")) {
+                        imageUrl = "https://images.unsplash.com/photo-1496417263034-38ec4f0b665a";
+                    } else if (room.roomType.toLowerCase().includes("family")) {
+                        imageUrl = "https://images.unsplash.com/photo-1505693538693-53f4e0b0fc8f";
+                    } else {
+                        imageUrl = "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85";
+                    }
+
+                    roomsList.innerHTML += `
+                        <div class="room-card">
+                            <img src="${imageUrl}" alt="${room.roomType}">
+                            <h3>${room.roomType}</h3>
+                            <p>Luxury stay with premium comfort.</p>
+                            <p>Price: ₹${room.price}</p>
+                            <p>${room.available ? "Available" : "Not Available"}</p>
+                            <a href="booking.html"><button>Book Now</button></a>
+                        </div>
+                    `;
+                });
+            })
+            .catch(error => console.error("Error loading rooms:", error));
+    </script>
+
+</body>
+
+</html>

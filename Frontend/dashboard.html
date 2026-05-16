@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GrandStay Customer Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <h1>GrandStay Customer Dashboard</h1>
+
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="rooms.html">Rooms</a>
+            <a href="restaurant.html">Restaurant</a>
+            <a href="booking.html">Booking</a>
+            <a href="dashboard.html" class="active">Dashboard</a>
+            <a href="admin.html">Admin</a>
+            <a href="login.html">Login</a>
+            <a href="#" onclick="logoutUser()">Logout</a>
+        </nav>
+    </header>
+
+    <!-- USER INFO -->
+    <section class="booking-form">
+        <h2 id="welcomeMessage">Welcome Guest</h2>
+
+        <p><strong>Name:</strong> <span id="userName"></span></p>
+        <p><strong>Email:</strong> <span id="userEmail"></span></p>
+        <p><strong>Role:</strong> <span id="userRole"></span></p>
+        <p><strong>Status:</strong> Premium Active ✅</p>
+    </section>
+
+    <!-- BOOKING HISTORY -->
+    <section>
+        <h2>Your Room Bookings</h2>
+
+        <table border="1" width="100%" cellpadding="10"
+            style="background:white; border-collapse: collapse; text-align:center;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Room Type</th>
+                    <th>Check-In</th>
+                    <th>Check-Out</th>
+                    <th>Guests</th>
+                    <th>Payment</th>
+                </tr>
+            </thead>
+
+            <tbody id="bookingTableBody">
+                <tr>
+                    <td colspan="6">Loading bookings...</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- FOOD ORDERS -->
+    <section>
+        <h2>Your Food Orders</h2>
+
+        <table border="1" width="100%" cellpadding="10"
+            style="background:white; border-collapse: collapse; text-align:center;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Food Item</th>
+                    <th>Quantity</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody id="foodOrderTableBody">
+                <tr>
+                    <td colspan="6">Loading food orders...</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- PREMIUM BENEFITS -->
+    <section>
+        <h2>Your Premium Benefits</h2>
+
+        <div class="rooms-container">
+
+            <div class="room-card">
+                <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85" alt="Luxury Stay">
+                <h3>Luxury Comfort</h3>
+                <p>Exclusive room access and premium suite upgrades.</p>
+            </div>
+
+            <div class="room-card">
+                <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0" alt="Dining">
+                <h3>Priority Dining</h3>
+                <p>Real-time gourmet food order tracking.</p>
+            </div>
+
+            <div class="room-card">
+                <img src="https://images.unsplash.com/photo-1556740749-887f6717d7e4" alt="Rewards">
+                <h3>Elite Rewards</h3>
+                <p>Premium membership perks and exclusive offers.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2026 GrandStay Hotel & Restaurant | Personalized Dashboard</p>
+    </footer>
+
+    <script>
+
+        // ===============================
+        // GET LOGGED IN USER
+        // ===============================
+        const loggedInUser = JSON.parse(localStorage.getItem("grandstayUser"));
+
+        if (!loggedInUser) {
+            alert("Please login first!");
+            window.location.href = "login.html";
+        }
+
+        document.getElementById("userName").innerText = loggedInUser.name;
+        document.getElementById("userEmail").innerText = loggedInUser.email;
+        document.getElementById("userRole").innerText = loggedInUser.role;
+
+        // ===============================
+        // LOAD ROOM BOOKINGS
+        // ===============================
+        fetch("http://localhost:8080/bookings")
+            .then(response => response.json())
+            .then(data => {
+
+                const bookingTable = document.getElementById("bookingTableBody");
+                bookingTable.innerHTML = "";
+
+                const userBookings = data.filter(
+                    booking => booking.customerEmail === loggedInUser.email
+                );
+
+                if (userBookings.length === 0) {
+                    bookingTable.innerHTML = `
+                    <tr>
+                        <td colspan="8">No room bookings found.</td>
+                    </tr>
+                `;
+                    return;
+                }
+
+                userBookings.forEach(booking => {
+                    bookingTable.innerHTML += `
+                    <tr>
+                        <td>${booking.id}</td>
+                        <td>${booking.roomType}</td>
+                        <td>${booking.checkInDate}</td>
+                        <td>${booking.checkOutDate}</td>
+                        <td>${booking.guests}</td>
+                        <td>Paid ✅</td>
+                    </tr>
+                `;
+                });
+
+            })
+            .catch(error => {
+                console.error("Booking Error:", error);
+
+                document.getElementById("bookingTableBody").innerHTML = `
+                <tr>
+                    <td colspan="8">Failed to load bookings.</td>
+                </tr>
+            `;
+            });
+
+
+        // ===============================
+        // LOAD FOOD ORDERS
+        // ===============================
+        fetch("http://localhost:8080/food-orders")
+            .then(response => response.json())
+            .then(data => {
+
+                const foodTable = document.getElementById("foodOrderTableBody");
+                foodTable.innerHTML = "";
+
+                const userOrders = data.filter(
+                    order => order.customerEmail === loggedInUser.email
+                );
+
+                if (userOrders.length === 0) {
+                    foodTable.innerHTML = `
+                    <tr>
+                        <td colspan="7">No food orders found.</td>
+                    </tr>
+                `;
+                    return;
+                }
+
+                userOrders.forEach(order => {
+                    foodTable.innerHTML += `
+                    <tr>
+                        <td>${order.id}</td>
+                        <td>${order.foodItem}</td>
+                        <td>${order.quantity}</td>
+                        <td>${order.orderDate}</td>
+                        <td>${order.orderTime}</td>
+                        <td>${order.orderStatus || "Pending"}</td>
+                    </tr>
+                `;
+                });
+
+            })
+            .catch(error => {
+                console.error("Food Order Error:", error);
+
+                document.getElementById("foodOrderTableBody").innerHTML = `
+                <tr>
+                    <td colspan="7">Failed to load food orders.</td>
+                </tr>
+            `;
+            });
+
+
+        // ===============================
+        // LOGOUT
+        // ===============================
+        function logoutUser() {
+            localStorage.removeItem("grandstayUser");
+            alert("Logged Out Successfully!");
+            window.location.href = "login.html";
+        }
+
+    </script>
