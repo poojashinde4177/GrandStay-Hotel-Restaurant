@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GrandStay Payment</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>Secure Payment Portal</h1>
+
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="rooms.html">Rooms</a>
+            <a href="restaurant.html">Restaurant</a>
+            <a href="booking.html">Booking</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="admin.html">Admin</a>
+            <a href="login.html">Login</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section>
+        <h2>Complete Your Luxury Reservation</h2>
+        <p>Your dream stay is one secure payment away. Choose your preferred payment method below.</p>
+    </section>
+
+    <!-- Payment Form -->
+    <section class="booking-form">
+
+        <h2>Payment Details</h2>
+
+        <input type="text" id="customerName" placeholder="Customer Name" required>
+
+        <h3>Card Payment</h3>
+
+        <input type="text" id="cardNumber" placeholder="Card Number (16 digits)" maxlength="16">
+
+        <input type="text" id="expiryDate" placeholder="MM/YY" maxlength="5">
+
+        <input type="password" id="cvv" placeholder="CVV" maxlength="3">
+
+        <h3>OR</h3>
+
+        <h3>UPI Payment</h3>
+
+        <input type="text" id="upiId" placeholder="Enter UPI ID (example@upi)">
+
+        <button onclick="processPayment()">Pay Now</button>
+
+    </section>
+
+    <!-- Security Features -->
+    <section>
+        <h2>Why Your Payment Is Safe</h2>
+
+        <div class="rooms-container">
+
+            <div class="room-card">
+                <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3" alt="Secure Transactions">
+                <h3>Secure Transactions</h3>
+                <p>Protected payment channels for complete peace of mind.</p>
+            </div>
+
+            <div class="room-card">
+                <img src="https://images.unsplash.com/photo-1556740749-887f6717d7e4" alt="Fast Processing">
+                <h3>Fast Processing</h3>
+                <p>Instant confirmations without unnecessary waiting.</p>
+            </div>
+
+            <div class="room-card">
+                <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f" alt="Trusted Payment">
+                <h3>Trusted Payment</h3>
+                <p>Designed for reliability, speed, and customer confidence.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 GrandStay Hotel & Restaurant | Secure Payment Gateway</p>
+    </footer>
+
+    <!-- Payment Script -->
+    <script>
+        function processPayment() {
+
+            const customerName = document.getElementById("customerName").value;
+            const cardNumber = document.getElementById("cardNumber").value;
+            const expiryDate = document.getElementById("expiryDate").value;
+            const cvv = document.getElementById("cvv").value;
+            const upiId = document.getElementById("upiId").value;
+
+            if (!customerName) {
+                alert("Please enter customer name!");
+                return;
+            }
+
+            if (
+                (cardNumber && expiryDate && cvv) ||
+                (upiId)
+            ) {
+
+                alert("Payment Successful! Your booking is confirmed.");
+                window.location.href = "dashboard.html";
+
+            } else {
+
+                alert("Please complete Card details OR UPI ID!");
+            }
+        }
+    </script>
+
+</body>
+
+</html>

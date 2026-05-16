@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GrandStay Success</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>GrandStay Hotel & Restaurant</h1>
+
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="rooms.html">Rooms</a>
+            <a href="restaurant.html">Restaurant</a>
+            <a href="booking.html">Booking</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="login.html">Login</a>
+        </nav>
+    </header>
+
+    <!-- Success Hero -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2>Booking / Order Confirmed Successfully! 🎉</h2>
+            <p>Your premium GrandStay experience is officially secured.</p>
+        </div>
+    </section>
+
+    <!-- Success Details -->
+    <section>
+        <div class="booking-form">
+
+            <h2 id="successTitle">Success Confirmation</h2>
+
+            <p><strong>Guest Name:</strong> <span id="customerName">Premium Guest</span></p>
+
+            <p><strong>Email:</strong> <span id="customerEmail">guest@grandstay.com</span></p>
+
+            <p><strong>Status:</strong> Confirmed ✅</p>
+
+            <p><strong>Message:</strong></p>
+
+            <p id="successMessage">
+                Thank you for choosing GrandStay. Your luxury reservation/order has been successfully recorded.
+            </p>
+
+            <br>
+
+            <button onclick="goDashboard()">Go To Dashboard</button>
+
+            <br><br>
+
+            <button onclick="goHome()">Back To Homepage</button>
+
+        </div>
+    </section>
+
+    <!-- Premium Benefits -->
+    <section>
+        <h2>What Happens Next?</h2>
+
+        <div class="rooms-container">
+
+            <div class="room-card">
+                <img src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85" alt="Room">
+                <h3>Luxury Ready</h3>
+                <p>Your booking or dining request is now in our premium system.</p>
+            </div>
+
+            <div class="room-card">
+                <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0" alt="Food">
+                <h3>Live Dashboard Tracking</h3>
+                <p>Monitor bookings and food orders from your dashboard.</p>
+            </div>
+
+            <div class="room-card">
+                <img src="https://images.unsplash.com/photo-1556740749-887f6717d7e4" alt="Rewards">
+                <h3>Elite Experience</h3>
+                <p>Enjoy premium hospitality, rewards, and exclusive comfort.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 GrandStay Hotel & Restaurant | Luxury Confirmed</p>
+    </footer>
+
+    <script>
+
+        // GET LOGGED IN USER
+        const loggedInUser = JSON.parse(localStorage.getItem("grandstayUser"));
+
+        if (loggedInUser) {
+            document.getElementById("customerName").innerText =
+                loggedInUser.name || "Premium Guest";
+
+            document.getElementById("customerEmail").innerText =
+                loggedInUser.email || "guest@grandstay.com";
+        }
+
+        // CHECK LAST FOOD ORDER
+        const lastFoodOrder = JSON.parse(localStorage.getItem("lastFoodOrder"));
+
+        // CHECK LAST BOOKING
+        const lastBooking = JSON.parse(localStorage.getItem("lastBooking"));
+
+        // FOOD ORDER SUCCESS
+        if (lastFoodOrder) {
+
+            document.getElementById("successTitle").innerText =
+                "Premium Food Order Confirmed 🍽️";
+
+            document.getElementById("successMessage").innerHTML =
+                `
+            Your order for <strong>${lastFoodOrder.foodItem}</strong>
+            (Quantity: <strong>${lastFoodOrder.quantity}</strong>)
+            is confirmed for
+            <strong>${lastFoodOrder.orderDate}</strong> at
+            <strong>${lastFoodOrder.orderTime}</strong>.
+            Current Status: <strong>Pending</strong>.
+            `;
+
+            localStorage.removeItem("lastFoodOrder");
+        }
+
+        // ROOM BOOKING SUCCESS
+        else if (lastBooking) {
+
+            document.getElementById("successTitle").innerText =
+                "Luxury Room Booking Confirmed 🏨";
+
+            document.getElementById("successMessage").innerHTML =
+                `
+            Your <strong>${lastBooking.roomType}</strong> booking is confirmed from
+            <strong>${lastBooking.checkInDate}</strong> to
+            <strong>${lastBooking.checkOutDate}</strong>.
+            Guests: <strong>${lastBooking.guests}</strong>.
+            Payment Status: <strong>Confirmed</strong>.
+            `;
+
+            localStorage.removeItem("lastBooking");
+        }
+
+        // GENERIC
+        else {
+            document.getElementById("successTitle").innerText =
+                "GrandStay Premium Success 🎉";
+
+            document.getElementById("successMessage").innerText =
+                "Your premium request has been successfully recorded.";
+        }
+
+        // DASHBOARD BUTTON
+        function goDashboard() {
+            window.location.href = "dashboard.html";
+        }
+
+        // HOME BUTTON
+        function goHome() {
+            window.location.href = "index.html";
+        }
+
+    </script>
+
+</body>
+
+</html>
